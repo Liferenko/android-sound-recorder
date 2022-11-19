@@ -31,7 +31,8 @@ class RecorderRepository{
     private val dir: File = File(Environment.getExternalStorageDirectory().absolutePath + "/soundrecorder/")
 
 
-    private var recordingTime: Long = 0
+    private var recordingTime: Long = 900
+    // Might be useful for blacklog
     private var timer = Timer()
     private val recordingTimeString = MutableLiveData<String>()
 
@@ -47,7 +48,7 @@ class RecorderRepository{
 
         if(dir.exists()){
             val count = dir.listFiles().size
-            output = Environment.getExternalStorageDirectory().absolutePath + "/soundrecorder/recording"+count+".mp3"
+            output = Environment.getExternalStorageDirectory().absolutePath + "/soundrecorder/recording_number_"+count+".mp3"
         }
 
         mediaRecorder = MediaRecorder()
@@ -60,8 +61,6 @@ class RecorderRepository{
 
     @SuppressLint("RestrictedApi")
     fun startRecording() {
-
-
         try {
             println("Starting recording!")
             mediaRecorder?.prepare()
@@ -118,7 +117,7 @@ class RecorderRepository{
     private fun startTimer(){
         timer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
-                recordingTime += 1
+                recordingTime -= 1
                 updateDisplay()
             }
         }, 1000, 1000)
@@ -131,8 +130,9 @@ class RecorderRepository{
 
     private fun resetTimer() {
         timer.cancel()
-        recordingTime = 0
-        recordingTimeString.postValue("00:00")
+        recordingTime = 900
+        // TODO add manual limit setting
+        recordingTimeString.postValue("15:00")
     }
 
     private fun updateDisplay(){

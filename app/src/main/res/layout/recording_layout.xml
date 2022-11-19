@@ -20,4 +20,5 @@
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_play"
     />
+<!--    TODO add N-minutes long chapters-->
 </RelativeLayout>

@@ -20,12 +20,15 @@ class RecordingRepository{
                 instance ?: RecordingRepository().also { instance = it }
             }
 
+        // TODO add remove_recording_after_time_limit
+        fun removeRecordingWhichOlderThenLimit(context: Context, title: String) {
+            Toast.makeText(context, "Im kinda trying to remove old recordings", Toast.LENGTH_SHORT).show()
+        }
 
         fun playRecording(context: Context, title: String){
             val path = Uri.parse(Environment.getExternalStorageDirectory().absolutePath+"/soundrecorder/$title")
-
-
             val manager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
             if(manager.isMusicActive) {
                 Toast.makeText(context, "Another recording is just playing! Wait until it's finished!", Toast.LENGTH_SHORT).show()
             }else{
