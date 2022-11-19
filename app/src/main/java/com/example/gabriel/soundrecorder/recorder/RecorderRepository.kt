@@ -3,11 +3,14 @@ package com.example.gabriel.soundrecorder.recorder
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.arch.lifecycle.MutableLiveData
+import android.icu.text.SimpleDateFormat
 import android.media.MediaRecorder
 import android.os.Build
 import android.os.Environment
 import java.io.IOException
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -31,6 +34,11 @@ class RecorderRepository{
     private val dir: File = File(Environment.getExternalStorageDirectory().absolutePath + "/soundrecorder/")
 
 
+    // TODO replace "count" with proper datetime
+    var time = Calendar.getInstance().time
+    val formatter = SimpleDateFormat("yyyy-MM-dd-HH-mm")
+    val current = formatter.format(time)
+
     private var recordingTime: Long = 900
     // Might be useful for blacklog
     private var timer = Timer()
@@ -47,7 +55,8 @@ class RecorderRepository{
         }
 
         if(dir.exists()){
-            val count = dir.listFiles().size
+//            val count = dir.listFiles().size
+            val count = current
             output = Environment.getExternalStorageDirectory().absolutePath + "/soundrecorder/recording_number_"+count+".mp3"
         }
 
@@ -104,7 +113,9 @@ class RecorderRepository{
         mediaRecorder = MediaRecorder()
 
         if(dir.exists()){
-            val count = dir.listFiles().size
+//            val count = dir.listFiles().size
+            val count = current
+
             output = Environment.getExternalStorageDirectory().absolutePath + "/soundrecorder/recording"+count+".mp3"
         }
 
@@ -127,6 +138,9 @@ class RecorderRepository{
         timer.cancel()
     }
 
+    private fun restartRecording() {
+        // TODO stop current recording and start new one
+    }
 
     private fun resetTimer() {
         timer.cancel()
