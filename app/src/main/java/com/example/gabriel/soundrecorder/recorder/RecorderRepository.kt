@@ -17,8 +17,7 @@ import java.util.*
 
 
 class RecorderRepository{
-
-
+    private var viewModel: RecorderViewModel? = null
     companion object {
         @Volatile
         private var instance: RecorderRepository? = null
@@ -34,12 +33,13 @@ class RecorderRepository{
     private val dir: File = File(Environment.getExternalStorageDirectory().absolutePath + "/soundrecorder/")
 
 
-    // TODO replace "count" with proper datetime
     var time = Calendar.getInstance().time
-    val formatter = SimpleDateFormat("yyyy-MM-dd-HH-mm")
+    val formatter = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")
     val current = formatter.format(time)
 
-    private var recordingTime: Long = 900
+    // TODO set length from UI
+    private var default_recordingTime: Long = 10
+    private var recordingTime: Long = default_recordingTime
     // Might be useful for blacklog
     private var timer = Timer()
     private val recordingTimeString = MutableLiveData<String>()
@@ -85,6 +85,8 @@ class RecorderRepository{
 
     @SuppressLint("RestrictedApi")
     fun stopRecording(){
+        // TODO stop recording when time is up
+        println("Stopping recording!")
         mediaRecorder?.stop()
         mediaRecorder?.release()
         stopTimer()
@@ -108,7 +110,6 @@ class RecorderRepository{
         startTimer()
         mediaRecorder?.resume()
     }
-
     private fun initRecorder() {
         mediaRecorder = MediaRecorder()
 
@@ -128,8 +129,13 @@ class RecorderRepository{
     private fun startTimer(){
         timer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
-                recordingTime -= 1
-                updateDisplay()
+                if(recordingTime > 0) {
+                    recordingTime -= 1
+                    updateDisplay()
+                } else {
+                    stopRecording()
+//                    startRecording()
+                }
             }
         }, 1000, 1000)
     }
@@ -140,11 +146,13 @@ class RecorderRepository{
 
     private fun restartRecording() {
         // TODO stop current recording and start new one
+        // Option: save all recordings in AWS S3 and set removing
+        // records from S3 after 24 or 48 hours
     }
 
     private fun resetTimer() {
         timer.cancel()
-        recordingTime = 900
+        recordingTime = default_recordingTime
         // TODO add manual limit setting
         recordingTimeString.postValue("15:00")
     }
@@ -152,7 +160,7 @@ class RecorderRepository{
     private fun updateDisplay(){
         val minutes = recordingTime / (60)
         val seconds = recordingTime % 60
-        val str = String.format("%d:%02d", minutes, seconds)
+        val str = String.format("0%d:%02d", minutes, seconds)
         recordingTimeString.postValue(str)
     }
 
