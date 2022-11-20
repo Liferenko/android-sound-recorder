@@ -9,8 +9,7 @@ import android.os.Build
 import android.os.Environment
 import java.io.IOException
 import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import com.example.gabriel.soundrecorder.recorder.RecorderViewModel
 import java.util.*
 
 
@@ -18,6 +17,7 @@ import java.util.*
 
 class RecorderRepository{
     private var viewModel: RecorderViewModel? = null
+
     companion object {
         @Volatile
         private var instance: RecorderRepository? = null
@@ -133,8 +133,11 @@ class RecorderRepository{
                     recordingTime -= 1
                     updateDisplay()
                 } else {
-                    stopRecording()
-//                    startRecording()
+                    viewModel?.stopRecording()
+                    println("Stop previous")
+                    recordingTime = default_recordingTime
+                    viewModel?.startRecording()
+                    println("start new")
                 }
             }
         }, 1000, 1000)

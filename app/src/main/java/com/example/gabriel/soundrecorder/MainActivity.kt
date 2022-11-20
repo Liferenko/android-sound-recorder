@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("RestrictedApi")
-    private fun stopRecording(){
+    fun stopRecording(){
         viewModel?.stopRecording()
 
         fab_stop_recording.isEnabled = false
